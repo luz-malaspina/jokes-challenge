@@ -74,8 +74,8 @@ const page = () => {
           return (
           <div key={fav.id}>
             <p>{fav.joke}</p>
-            <button onClick={()=> removeFromFavorites(fav)}>
-              Remove from favorites
+            <button onClick={()=> removeFromFavorites(fav)} className='removeButton'>
+              Remove
             </button>
           </div>
         )})}
@@ -85,16 +85,16 @@ const page = () => {
 
   return (
     <div className='joke-modal'>
-     <p>{jokes.joke}</p>
-     <div>
-      <button onClick={()=> consultJokes()}>
+     <p className='joke'>{jokes.joke}</p>
+     <div className='buttons'>
+      <button onClick={()=> consultJokes()} className='seeOtherButton'>
         see other joke
       </button>
-      <button type='button' onClick={()=> addToFavorites(jokes)}>
+      <button type='button' onClick={()=> addToFavorites(jokes)} className='addButton'>
         add to favorites
       </button>
      </div>
-     <button type='button' onClick={()=> setListJokes(true)}>
+     <button type='button' onClick={()=> setListJokes(true)} className='seeButton'>
         see my jokes
       </button>
     </div>
