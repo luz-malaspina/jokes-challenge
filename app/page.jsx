@@ -5,6 +5,8 @@ const page = () => {
   const [ jokes, setJokes ] = useState({joke: ''});
   const [ listJokes , setListJokes ] = useState(false);
   const [ idToDelete, setIdToDelete ] = useState(null);
+  const [ search, setSearch ] = useState(null);
+  const [ showButton, setShowButton ] = useState(null);
  
   const consultJokes =  useCallback(async ()=> {
     const response = await fetch("https://icanhazdadjoke.com/", {
@@ -33,23 +35,20 @@ const page = () => {
     return jokes
   },[idToDelete, favorites]);
 
-  const updateFavoritesInLocalStorage = ()=> {
-    localStorage.setItem('favorites', JSON.stringify(favorites))
-  }
-
   const addToFavorites =  useCallback((value)=> {
-   const index = favorites.findIndex(
-    element => element.id === value.id
-   );
+    setShowButton(true);
+    const index = favorites.findIndex(
+      element => element.id === value.id
+    );
 
-   if(index > -1) {
-    favorites.splice(index, 1)
-    localStorage.setItem('favorites', JSON.stringify(favorites))
-   } else {
-    favorites.push(value);
-    localStorage.setItem('favorites', JSON.stringify(favorites))
-   }
-  },[favorites]);
+    if(index > -1) {
+      favorites.splice(index, 1)
+      localStorage.setItem('favorites', JSON.stringify(favorites))
+    } else {
+      favorites.push(value);
+      localStorage.setItem('favorites', JSON.stringify(favorites))
+    }
+  },[favorites, setShowButton]);
 
   const removeFromFavorites = useCallback((value)=> {
     const index = favorites.findIndex(
@@ -64,13 +63,28 @@ const page = () => {
     consultJokes();
   },[]);
 
+  const filterResults = !search 
+    ? filteredJokes 
+    : filteredJokes.filter((data)=> data.joke.toLowerCase().includes(search.toLowerCase()));
+
+  const handleSearch = useCallback((e)=> {
+    setSearch(e.target.value);
+  },[setSearch])
+
   if(listJokes && filteredJokes) {
     return (
       <div className='favorite-list'>
         <button onClick={()=> {setListJokes(false)}}>
           Back
         </button>
-        {filteredJokes.map((fav)=> {
+        <input 
+          value={search} 
+          type='text' 
+          placeholder='search...' 
+          className='input-search'
+          onChange={handleSearch}
+        />
+        {filterResults.map((fav)=> {
           return (
           <div key={fav.id}>
             <p>{fav.joke}</p>
@@ -94,9 +108,12 @@ const page = () => {
         add to favorites
       </button>
      </div>
-     <button type='button' onClick={()=> setListJokes(true)} className='seeButton'>
+     {
+      (showButton && filterResults.length > 0) ?
+      <button type='button' onClick={()=> setListJokes(true)} className='seeButton'>
         see my jokes
-      </button>
+      </button> : null
+     }
     </div>
   )
 }

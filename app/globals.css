@@ -63,6 +63,14 @@ button {
   border: 1px solid black;
 }
 
+.input-search {
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+  height: 40px;
+  border-radius: 8px;
+  padding-left: 10px;
+}
+
 @media(min-width: 900px) {
   .joke {
     font-size: 20px;
