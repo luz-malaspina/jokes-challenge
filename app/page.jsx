@@ -6,8 +6,7 @@ const page = () => {
   const [ listJokes , setListJokes ] = useState(false);
   const [ idToDelete, setIdToDelete ] = useState(null);
   const [ search, setSearch ] = useState(null);
-  const [ showButton, setShowButton ] = useState(null);
- 
+
   const consultJokes =  useCallback(async ()=> {
     const response = await fetch("https://icanhazdadjoke.com/", {
       headers: {
@@ -36,7 +35,6 @@ const page = () => {
   },[idToDelete, favorites]);
 
   const addToFavorites =  useCallback((value)=> {
-    setShowButton(true);
     const index = favorites.findIndex(
       element => element.id === value.id
     );
@@ -48,7 +46,7 @@ const page = () => {
       favorites.push(value);
       localStorage.setItem('favorites', JSON.stringify(favorites))
     }
-  },[favorites, setShowButton]);
+  },[favorites]);
 
   const removeFromFavorites = useCallback((value)=> {
     const index = favorites.findIndex(
@@ -71,6 +69,14 @@ const page = () => {
     setSearch(e.target.value);
   },[setSearch])
 
+  const handleCopy = useCallback(async (text)=> {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      return
+    }
+  },[]);
+
   if(listJokes && filteredJokes) {
     return (
       <div className='favorite-list'>
@@ -91,6 +97,9 @@ const page = () => {
             <button onClick={()=> removeFromFavorites(fav)} className='removeButton'>
               Remove
             </button>
+            <button onClick={()=> handleCopy(fav.joke)} className='copyButton'>
+              Copy
+            </button>
           </div>
         )})}
       </div>
@@ -109,7 +118,7 @@ const page = () => {
       </button>
      </div>
      {
-      (showButton && filterResults.length > 0) ?
+      (filterResults.length > 0) ?
       <button type='button' onClick={()=> setListJokes(true)} className='seeButton'>
         see my jokes
       </button> : null
