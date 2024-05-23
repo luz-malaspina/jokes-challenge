@@ -7,17 +7,6 @@ const page = () => {
   const [ idToDelete, setIdToDelete ] = useState(null);
   const [ search, setSearch ] = useState(null);
 
-  const consultJokes =  useCallback(async ()=> {
-    const response = await fetch("https://icanhazdadjoke.com/", {
-      headers: {
-        Accept: "application/json"
-      }
-    });
-
-    const result = await response.json();
-    setJokes(result);
-  },[setJokes])
-
   let favorites = [];
 
   if(localStorage.getItem('favorites') == null) {
@@ -33,6 +22,17 @@ const page = () => {
 
     return jokes
   },[idToDelete, favorites]);
+
+  const consultJokes =  useCallback(async ()=> {
+    const response = await fetch("https://icanhazdadjoke.com/", {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    const result = await response.json();
+    setJokes(result);
+  },[setJokes]);
 
   const addToFavorites =  useCallback((value)=> {
     const index = favorites.findIndex(
@@ -51,18 +51,13 @@ const page = () => {
   const removeFromFavorites = useCallback((value)=> {
     const index = favorites.findIndex(
       element => element.id === value.id
-     );    
+    );    
     favorites.splice(index, 1);
     localStorage.setItem('favorites', JSON.stringify(favorites))
     setIdToDelete(value.id);
   },[favorites,setIdToDelete]);
   
-  useEffect(()=> {
-    consultJokes();
-  },[]);
-
-  const filterResults = !search 
-    ? filteredJokes 
+  const filterResults = !search ? filteredJokes 
     : filteredJokes.filter((data)=> data.joke.toLowerCase().includes(search.toLowerCase()));
 
   const handleSearch = useCallback((e)=> {
@@ -77,12 +72,14 @@ const page = () => {
     }
   },[]);
 
+  useEffect(()=> {
+    consultJokes();
+  },[]);
+
   if(listJokes && filteredJokes) {
     return (
       <div className='favorite-list'>
-        <button onClick={()=> {setListJokes(false)}}>
-          Back
-        </button>
+        <button onClick={()=> setListJokes(false)}>Back</button>
         <input 
           value={search} 
           type='text' 
@@ -94,12 +91,8 @@ const page = () => {
           return (
           <div key={fav.id}>
             <p>{fav.joke}</p>
-            <button onClick={()=> removeFromFavorites(fav)} className='removeButton'>
-              Remove
-            </button>
-            <button onClick={()=> handleCopy(fav.joke)} className='copyButton'>
-              Copy
-            </button>
+            <button onClick={()=> removeFromFavorites(fav)} className='removeButton'>Remove</button>
+            <button onClick={()=> handleCopy(fav.joke)} className='copyButton'>Copy</button>
           </div>
         )})}
       </div>
@@ -108,16 +101,16 @@ const page = () => {
 
   return (
     <div className='joke-modal'>
-     <p className='joke'>{jokes.joke}</p>
-     <div className='buttons'>
-      <button onClick={()=> consultJokes()} className='seeOtherButton'>
-        see other joke
-      </button>
-      <button type='button' onClick={()=> addToFavorites(jokes)} className='addButton'>
-        add to favorites
-      </button>
-     </div>
-     <button type='button' onClick={()=> setListJokes(true)} className='seeButton'>
+      <p className='joke'>{jokes.joke}</p>
+      <div className='buttons'>
+        <button onClick={()=> consultJokes()} className='seeOtherButton'>
+          see other joke
+        </button>
+        <button type='button' onClick={()=> addToFavorites(jokes)} className='addButton'>
+          add to favorites
+        </button>
+      </div>
+      <button type='button' onClick={()=> setListJokes(true)} className='seeButton'>
         see my jokes
       </button> 
     </div>
