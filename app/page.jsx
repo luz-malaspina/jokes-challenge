@@ -117,12 +117,9 @@ const page = () => {
         add to favorites
       </button>
      </div>
-     {
-      (filterResults.length > 0) ?
-      <button type='button' onClick={()=> setListJokes(true)} className='seeButton'>
+     <button type='button' onClick={()=> setListJokes(true)} className='seeButton'>
         see my jokes
-      </button> : null
-     }
+      </button> 
     </div>
   )
 }
